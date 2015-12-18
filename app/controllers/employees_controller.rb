@@ -1,15 +1,15 @@
 class EmployeesController < ApplicationController
   def index
-    employee_options_hashes = Unirest.get("http://localhost:3000/employees.json").body
-    @employees = []
-    employee_options_hashes.each do |employee_options_hash|
-      @employees << Employee.new(employee_options_hash)
-    end
+    # employee_options_hashes = Unirest.get("http://localhost:3000/employees.json").body
+    # @employees = []
+    # employee_options_hashes.each do |employee_options_hash|
+    #   @employees << Employee.new(employee_options_hash)
+    # end
+    @employees = Employee.all
   end
 
   def show
-    employee_options_hash = Unirest.get("http://localhost:3000/employees/#{params[:id]}.json").body
-    @employee = Employee.new(employee_options_hash)
+    @employee = Employee.find_by(id: params[:id])
   end
 
   def new
