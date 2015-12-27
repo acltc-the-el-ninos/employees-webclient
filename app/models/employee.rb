@@ -1,5 +1,10 @@
 class Employee
   attr_accessor :id, :first_name, :last_name, :email, :birthdate
+  @@headers = {
+    "Accept" => "application/json",
+    "Authorization" => "Token token=#{ENV['API_KEY']}",
+    "X-User-Email" => "#{ENV['API_EMAIL']}"
+  }
 
   def initialize(input_options)
     @id = input_options["id"]
@@ -14,11 +19,17 @@ class Employee
   end
 
   def destroy
-    Unirest.delete("#{ENV['API_BASE_URL']}/employees/#{id}.json")
+    Unirest.delete(
+      "#{ENV['API_BASE_URL']}/employees/#{id}.json",
+      headers: @@headers
+    )
   end
 
   def self.all
-    employee_options_hashes = Unirest.get("#{ENV['API_BASE_URL']}/employees.json").body
+    employee_options_hashes = Unirest.get(
+      "#{ENV['API_BASE_URL']}/employees.json",
+      headers: @@headers
+    ).body
     employees = []
     employee_options_hashes.each do |employee_options_hash|
       employees << Employee.new(employee_options_hash)
@@ -28,14 +39,17 @@ class Employee
 
   def self.find_by(input_options)
     id = input_options[:id]
-    employee_options_hash = Unirest.get("#{ENV['API_BASE_URL']}/employees/#{id}.json").body
+    employee_options_hash = Unirest.get(
+      "#{ENV['API_BASE_URL']}/employees/#{id}.json",
+      headers: @@headers
+    ).body
     Employee.new(employee_options_hash)
   end
 
   def self.create(input_options)
     employee_options_hash = Unirest.post(
       "#{ENV['API_BASE_URL']}/employees.json",
-      headers: { "Accept" => "application/json" }, 
+      headers: @@headers, 
       parameters: input_options
     ).body
     Employee.new(employee_options_hash)
